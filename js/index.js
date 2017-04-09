@@ -14,9 +14,20 @@ var LeaderboardTable = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
-    _this.fetchLastMonth = function () {
+    _this.showAllTime = function () {
+      console.log("showAllTime");
+      var url = 'https://fcctop100.herokuapp.com/api/fccusers/top/alltime';
+      _this.fetchData(url);
+    };
+
+    _this.show30Days = function () {
+      var url = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
+      _this.fetchData(url);
+    };
+
+    _this.fetchData = function (url) {
       var that = _this;
-      fetch('https://fcctop100.herokuapp.com/api/fccusers/top/recent').then(function (response) {
+      fetch(url).then(function (response) {
         if (response.status !== 200) {
           console.log('Looks like there was a problem. Status Code: ' + response.status);
           return;
@@ -33,6 +44,7 @@ var LeaderboardTable = function (_React$Component) {
             var info = that.state.data.slice();
             info.push(data);
             that.setState({ data: info });
+            console.log(that.state.data[0]);
           }
         });
       }).catch(function (err) {
@@ -41,24 +53,17 @@ var LeaderboardTable = function (_React$Component) {
     };
 
     _this.state = {
-      namesList: [],
-      pointLast30Days: [],
       data: []
     };
     return _this;
   }
 
-  LeaderboardTable.prototype.componentWillMount = function componentWillMount() {
-    console.log('Component WILL MOUNT!');
-
-    this.fetchLastMonth();
-  };
-
   LeaderboardTable.prototype.componentDidMount = function componentDidMount() {
-    this.fetchLastMonth();
+    this.fetchData('https://fcctop100.herokuapp.com/api/fccusers/top/recent');
   };
 
   LeaderboardTable.prototype.render = function render() {
+    console.log("ee: " + this.state.data[0]);
     var listItems = this.state.data.map(function (arr) {
       return React.createElement(
         'tr',
@@ -97,18 +102,18 @@ var LeaderboardTable = function (_React$Component) {
           null,
           'Username'
         ),
-        '                           ',
+        '                     ',
         React.createElement(
           'th',
-          null,
+          { onClick: this.show30Days.bind(this) },
           'Last 30 Days Points'
         ),
         React.createElement(
           'th',
-          null,
+          { onClick: this.showAllTime.bind(this) },
           'All Time Points'
         ),
-        '                        '
+        '              '
       ),
       listItems
     );
