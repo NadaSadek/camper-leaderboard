@@ -1,0 +1,65 @@
+class LeaderboardTable extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      namesList: [],
+      pointLast30Days: [],
+      data: []
+    }
+  }
+  componentWillMount() {
+console.log('Component WILL MOUNT!')
+
+ this.fetchLastMonth();
+  }
+  componentDidMount(){
+     this.fetchLastMonth();
+
+  }
+ fetchLastMonth = () => {
+   var that = this;
+ fetch('https://fcctop100.herokuapp.com/api/fccusers/top/recent')  
+  .then(function(response) { 
+   if (response.status !== 200) {
+     console.log('Looks like there was a problem. Status Code: ' +  
+          response.status);  
+      return;  
+    } 
+      // Examine the text in the response 
+      response.json().then(function(res) {
+    for (var i = 0; i < res.length; i++) {
+    let data = new Array(); 
+    data[0] = res[i].img; 
+    data[1] = res[i].username;
+    data[2] = res[i].recent;
+    data[3] = res[i].alltime;
+   
+
+let info = that.state.data.slice();
+    info.push(data); 
+ that.setState({data: info}); 
+}
+})  
+  }).catch(function(err) {  
+    console.log('Fetch Error ', err);  
+  });
+ };
+
+  render(){
+    const listItems = this.state.data.map((arr) =>
+    <tr>
+                                            <td><img className="img-thumbnail img-responsive img-circle" alt="channel icon" src={arr[0]}/>{arr[1]} </td>   
+<td> {arr[2]} </td>
+ <td> {arr[3]} </td>                             
+    </tr>
+    ); 
+                           return (<table>
+                            <tr><th>Username</th>                           <th>Last 30 Days Points</th>
+ <th>All Time Points</th>                        </tr>{listItems}</table>);
+}
+  
+}
+
+ReactDOM.render(
+<LeaderboardTable/>, document.getElementById('container')
+);
