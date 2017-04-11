@@ -17,15 +17,15 @@ var LeaderboardTable = function (_React$Component) {
     _this.showAllTime = function () {
       console.log("showAllTime");
       var url = 'https://fcctop100.herokuapp.com/api/fccusers/top/alltime';
-      _this.fetchData(url);
+      _this.fetchJSON(url);
     };
 
     _this.show30Days = function () {
       var url = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
-      _this.fetchData(url);
+      _this.fetchJSON(url);
     };
 
-    _this.fetchData = function (url) {
+    _this.fetchJSON = function (url) {
       var that = _this;
       fetch(url).then(function (response) {
         if (response.status !== 200) {
@@ -34,18 +34,10 @@ var LeaderboardTable = function (_React$Component) {
         }
         // Examine the text in the response
         response.json().then(function (res) {
-          for (var i = 0; i < res.length; i++) {
-            var data = new Array();
-            data[0] = res[i].img;
-            data[1] = res[i].username;
-            data[2] = res[i].recent;
-            data[3] = res[i].alltime;
-
-            var info = that.state.data.slice();
-            info.push(data);
-            that.setState({ data: info });
-            console.log(that.state.data[0]);
-          }
+          console.log(res);
+          that.setState({ data: res }, function () {
+            console.log(that.state.data);
+          });
         });
       }).catch(function (err) {
         console.log('Fetch Error ', err);
@@ -59,12 +51,23 @@ var LeaderboardTable = function (_React$Component) {
   }
 
   LeaderboardTable.prototype.componentDidMount = function componentDidMount() {
-    this.fetchData('https://fcctop100.herokuapp.com/api/fccusers/top/recent');
+    this.fetchJSON('https://fcctop100.herokuapp.com/api/fccusers/top/recent');
   };
 
   LeaderboardTable.prototype.render = function render() {
-    console.log("ee: " + this.state.data[0]);
-    var listItems = this.state.data.map(function (arr) {
+    var arr1 = [];
+    for (var i = 0; i < this.state.data.length; i++) {
+      var infoArray = new Array();
+      infoArray[0] = this.state.data[i].img;
+      infoArray[1] = this.state.data[i].username;
+      infoArray[2] = this.state.data[i].recent;
+      infoArray[3] = this.state.data[i].alltime;
+
+      var info = arr1.slice();
+      info.push(infoArray);
+      arr1 = info;
+    }
+    var listItems = arr1.map(function (arr) {
       return React.createElement(
         'tr',
         null,
@@ -102,18 +105,25 @@ var LeaderboardTable = function (_React$Component) {
           null,
           'Username'
         ),
-        '                     ',
         React.createElement(
           'th',
           { onClick: this.show30Days.bind(this) },
-          'Last 30 Days Points'
+          React.createElement(
+            'a',
+            { href: '#' },
+            'Last 30 Days Points'
+          )
         ),
         React.createElement(
           'th',
           { onClick: this.showAllTime.bind(this) },
-          'All Time Points'
+          React.createElement(
+            'a',
+            { href: '#' },
+            'All Time Points'
+          )
         ),
-        '              '
+        '   '
       ),
       listItems
     );

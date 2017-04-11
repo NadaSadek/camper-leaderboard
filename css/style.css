@@ -1,5 +1,8 @@
 body {
   padding: 50px;
+  background-color: #408B54;
+  color: black;
+  font-family: "Coda", cursive;
 }
 
 .img-responsive {
@@ -7,11 +10,7 @@ body {
 }
 
 table {
-  border: solid 1px;
   width: 100%;
   border-collapse: collapse;
-}
-
-td, th {
-  border: solid 1px;
+  background-color: #FFFFFF;
 }

@@ -5,19 +5,19 @@ class LeaderboardTable extends React.Component {
       data: []
     }
   }
-   componentDidMount() {
- this.fetchData('https://fcctop100.herokuapp.com/api/fccusers/top/recent');
-  } 
+  componentDidMount() {
+ this.fetchJSON('https://fcctop100.herokuapp.com/api/fccusers/top/recent');
+  }  
   showAllTime = () => {
     console.log("showAllTime");
    const url = 'https://fcctop100.herokuapp.com/api/fccusers/top/alltime';
-   this.fetchData(url);  
+   this.fetchJSON(url);  
   };
  show30Days = () => {
   const url = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
-   this.fetchData(url);
+   this.fetchJSON(url);
  };
- fetchData = (url) => {
+ fetchJSON = (url) => {
    var that = this;
  fetch(url)  
   .then(function(response) { 
@@ -28,37 +28,41 @@ class LeaderboardTable extends React.Component {
     } 
       // Examine the text in the response
       response.json().then(function(res) {
-    for (var i = 0; i < res.length; i++) {
-    let data = new Array(); 
-    data[0] = res[i].img; 
-    data[1] = res[i].username;
-    data[2] = res[i].recent;
-    data[3] = res[i].alltime;
-   
-var info = that.state.data.slice();
-    info.push(data); 
- that.setState({data: info}); 
-console.log(that.state.data[0])
-    }
+        console.log(res)
+       that.setState({data: res}, function(){
+        console.log(that.state.data)
+       
+       });
 })  
   }).catch(function(err) {  
     console.log('Fetch Error ', err);  
   });
  };
-
+ 
   render(){
-    console.log("ee: " + this.state.data[0])
-    let listItems = this.state.data.map((arr) =>
+    let arr1 = [];
+    for (var i = 0; i < this.state.data.length; i++) {
+    let infoArray = new Array(); 
+    infoArray[0] = this.state.data[i].img; 
+    infoArray[1] = this.state.data[i].username;
+    infoArray[2] = this.state.data[i].recent;
+    infoArray[3] = this.state.data[i].alltime;
+   
+    let info = arr1.slice();
+    info.push(infoArray); 
+    arr1 = info;
+    }
+    let listItems = arr1.map((arr) =>
                                 
     <tr>
-<td><img className="img-thumbnail img-responsive img-circle" alt="channel icon" src={arr[0]}/>{arr[1]} </td>   
+<td><img className="img-thumbnail img-responsive img-circle" alt="channel icon" src={arr[0]} />{ arr[1]} </td>   
 <td> {arr[2]} </td>
  <td> {arr[3]} </td>                             
     </tr>
     ); 
-                           return (<table>
-                                            <tr><th>Username</th>                     <th onClick={this.show30Days.bind(this)}>Last 30 Days Points</th>
-    <th onClick={this.showAllTime.bind(this)} >All Time Points</th>              </tr>{listItems}</table>);
+    return (<table>
+<tr><th>Username</th>
+  <th onClick={this.show30Days.bind(this)}><a href="#">Last 30 Days Points</a></th><th onClick={this.showAllTime.bind(this)} ><a href="#">All Time Points</a></th>   </tr>{listItems}</table>);
 }
   
 }
