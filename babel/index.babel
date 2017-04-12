@@ -2,7 +2,8 @@ class LeaderboardTable extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data: []
+      data: [],
+      sortType: 1 //1 => last 30 days, 2 => all time
     }
   }
   componentDidMount() {
@@ -11,58 +12,59 @@ class LeaderboardTable extends React.Component {
   showAllTime = () => {
     console.log("showAllTime");
    const url = 'https://fcctop100.herokuapp.com/api/fccusers/top/alltime';
-   this.fetchJSON(url);  
+   this.fetchJSON(url); 
+   this.setState({
+     sortType: 2
+   });
   };
  show30Days = () => {
-  const url = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
+   const url = 'https://fcctop100.herokuapp.com/api/fccusers/top/recent';
    this.fetchJSON(url);
+   this.setState({
+     sortType: 1
+   });
  };
  fetchJSON = (url) => {
-   var that = this;
- fetch(url)  
-  .then(function(response) { 
+ const that = this;
+ fetch(url)  .then(function(response) { 
    if (response.status !== 200) {
      console.log('Looks like there was a problem. Status Code: ' +  
           response.status);  
       return;  
     } 
-      // Examine the text in the response
       response.json().then(function(res) {
-        console.log(res)
        that.setState({data: res}, function(){
-        console.log(that.state.data)
-       
        });
 })  
   }).catch(function(err) {  
     console.log('Fetch Error ', err);  
   });
  };
- 
-  render(){
-    let arr1 = [];
+  getUsersList = () => {
+    let usersData = [];
     for (var i = 0; i < this.state.data.length; i++) {
-    let infoArray = new Array(); 
-    infoArray[0] = this.state.data[i].img; 
-    infoArray[1] = this.state.data[i].username;
-    infoArray[2] = this.state.data[i].recent;
-    infoArray[3] = this.state.data[i].alltime;
-   
-    let info = arr1.slice();
-    info.push(infoArray); 
-    arr1 = info;
+      const infoArray = new Array(); 
+      infoArray[0] = this.state.data[i].img; 
+      infoArray[1] = this.state.data[i].username;
+      infoArray[2] = this.state.data[i].recent;
+      infoArray[3] = this.state.data[i].alltime;
+      const info = usersData.slice();
+      info.push(infoArray); 
+      usersData = info;
     }
-    let listItems = arr1.map((arr) =>
-                                
-    <tr>
-<td><img className="img-thumbnail img-responsive img-circle" alt="channel icon" src={arr[0]} />{ arr[1]} </td>   
+    return usersData;
+  };
+
+  render(){
+      const usersArray = this.getUsersList();
+      const list = usersArray.map((arr) =>                          
+    <tr><td><img className="img-thumbnail img-responsive img-circle" alt="channel icon" src={arr[0]}  />  {arr[1]} </td>   
 <td> {arr[2]} </td>
- <td> {arr[3]} </td>                             
-    </tr>
-    ); 
-    return (<table>
-<tr><th>Username</th>
-  <th onClick={this.show30Days.bind(this)}><a href="#">Last 30 Days Points</a></th><th onClick={this.showAllTime.bind(this)} ><a href="#">All Time Points</a></th>   </tr>{listItems}</table>);
+ <td> {arr[3]} </td></tr>
+    );
+    return (<table><tr><th>Username</th>
+  <th onClick={this.show30Days.bind(this)}><div  className={this.state.sortType === 1? "disableCursor": " clickable"} >Last 30 Days Points</div></th>
+<th onClick={this.showAllTime.bind(this)} ><div  className={this.state.sortType === 2? "disableCursor": " clickable"}>All Time Points</div></th>   </tr>{list}</table>);
 }
   
 }

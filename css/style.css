@@ -1,6 +1,12 @@
+h1 {
+  text-align: center;
+  padding-bottom: 20px;
+  color: white;
+}
+
 body {
   padding: 50px;
-  background-color: #408B54;
+  background-color: #3D9970;
   color: black;
   font-family: "Coda", cursive;
 }
@@ -13,4 +19,14 @@ table {
   width: 100%;
   border-collapse: collapse;
   background-color: #FFFFFF;
+}
+
+.disableCursor {
+  pointer-events: none;
+  cursor: none;
+  color: #2D6D70;
+}
+
+.clickable {
+  cursor: pointer;
 }

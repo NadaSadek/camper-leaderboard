@@ -1,10 +1,17 @@
+$background-color: #3D9970
+$selected-color: #2D6D70
+$click-color: #0074D9
 
+h1
+  text-align: center
+  padding-bottom: 20px
+  color: white
+  
 body
   padding: 50px
-  background-color: #408B54
+  background-color: $background-color
   color: black
   font-family: 'Coda', cursive
-
   
   
 .img-responsive
@@ -15,3 +22,10 @@ table
   border-collapse: collapse
   background-color: #FFFFFF
 
+.disableCursor
+  pointer-events: none
+  cursor: none
+  color: $selected-color
+
+.clickable
+  cursor: pointer
